@@ -6,12 +6,12 @@ echo " Flask + PostgreSQL EC2 Setup (Ubuntu) "
 echo "========================================"
 echo ""
 
-### 1. Update system
-echo "[1/7] Updating system..."
+# 1. Update system
+echo "[1/6] Updating system..."
 sudo apt update -y && sudo apt upgrade -y
 
-### 2. Install system dependencies
-echo "[2/7] Installing system dependencies..."
+# 2. Install dependencies
+echo "[2/6] Installing system dependencies..."
 sudo apt install -y \
   python3 \
   python3-pip \
@@ -19,64 +19,44 @@ sudo apt install -y \
   postgresql-client \
   git
 
-### 3. Create virtual environment
-echo "[3/7] Creating Python virtual environment..."
+# 3. Create virtual environment
+echo "[3/6] Creating virtual environment..."
 python3 -m venv venv
+
+# 4. Install Python dependencies
+echo "[4/6] Installing Python dependencies..."
 source venv/bin/activate
-
-### 4. Upgrade pip
-echo "[4/7] Upgrading pip..."
 pip install --upgrade pip
-
-### 5. Install Python dependencies
-echo "[5/7] Installing Python dependencies..."
-if [ ! -f requirements.txt ]; then
-  echo "❌ requirements.txt not found!"
-  exit 1
-fi
 pip install -r requirements.txt
 
-### 6. Ask for database details
+# 5. Ask for DB config
 echo ""
-echo "[6/7] Database configuration"
+echo "[5/6] Database configuration"
 
-read -r -p "Enter RDS endpoint (example: database-1.xxxx.ap-south-1.rds.amazonaws.com): " DB_HOST
-read -r -p "Enter database name (example: notes_app): " DB_NAME
-read -r -p "Enter database username (example: postgres): " DB_USER
-read -s -r -p "Enter database password: " DB_PASSWORD
+read -p "RDS endpoint: " DB_HOST
+read -p "Database name: " DB_NAME
+read -p "Database user: " DB_USER
+read -s -p "Database password: " DB_PASS
 echo ""
+read -p "Flask SECRET_KEY: " SECRET_KEY
 
-read -r -p "Enter Flask SECRET_KEY: " SECRET_KEY
+DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:5432/${DB_NAME}"
 
-### 7. Construct DATABASE_URL safely
-DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}"
+# 6. Save env vars correctly
+echo "[6/6] Saving environment variables..."
 
-echo ""
-echo "[7/7] Saving environment variables..."
+sed -i '/DATABASE_URL/d' ~/.profile
+sed -i '/SECRET_KEY/d' ~/.profile
 
-# Remove old values if present
-sed -i '/^export DATABASE_URL=/d' ~/.bashrc
-sed -i '/^export SECRET_KEY=/d' ~/.bashrc
-
-# Persist variables
-echo "export DATABASE_URL=\"${DATABASE_URL}\"" >> ~/.bashrc
-echo "export SECRET_KEY=\"${SECRET_KEY}\"" >> ~/.bashrc
-
-# Export for current session
-export DATABASE_URL="${DATABASE_URL}"
-export SECRET_KEY="${SECRET_KEY}"
+echo "export DATABASE_URL=\"$DATABASE_URL\"" >> ~/.profile
+echo "export SECRET_KEY=\"$SECRET_KEY\"" >> ~/.profile
 
 echo ""
-echo "✅ Environment variables configured successfully!"
+echo "✅ Setup completed successfully"
 echo ""
-echo "DATABASE_URL constructed as:"
-echo "$DATABASE_URL"
+echo "IMPORTANT NEXT STEPS:"
+echo "1️⃣ Run: source ~/.profile"
+echo "2️⃣ Run: source venv/bin/activate"
+echo "3️⃣ Run: python3 main.py"
 echo ""
-echo "Next steps:"
-echo "1. source ~/.bashrc"
-echo "2. source venv/bin/activate"
-echo "3. python3 main.py"
-echo ""
-echo "========================================"
-echo " Setup completed successfully 🚀"
 echo "========================================"
