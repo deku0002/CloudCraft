@@ -1,137 +1,99 @@
-# Flask + AWS RDS (PostgreSQL) Project 🚀
+# ☁️ CloudCraft – Linux × AWS Deployment Workshop
 
-A production-ready Flask web application connected to **AWS RDS (PostgreSQL)** and deployed on **EC2 (Ubuntu)**.  
-This project demonstrates real-world backend concepts including cloud databases, environment-based configuration, and Linux automation.
+Welcome to **CloudCraft** 👋  
+In this workshop, you will learn how to **deploy a live web application on AWS EC2 using Linux**.
 
----
-
-## 🔥 Features
-
-- User authentication (Sign up / Login / Logout)
-- Notes management (add & delete notes)
-- PostgreSQL database hosted on **AWS RDS**
-- Flask backend with **SQLAlchemy ORM**
-- Secure configuration using **environment variables**
-- Automated EC2 setup using a shell script
-- Ready for production deployment
+This is a **hands-on cloud deployment experience**, designed to help you understand how real servers work on the internet.
 
 ---
 
-## 🏗️ Tech Stack
+## 🎯 Workshop Goal
 
-- **Backend**: Flask (Python)
-- **Database**: PostgreSQL (AWS RDS)
-- **ORM**: Flask-SQLAlchemy
-- **Auth**: Flask-Login
-- **Server**: AWS EC2 (Ubuntu)
-- **OS**: Linux
-- **Cloud**: AWS
+By the end of this workshop, you will:
+
+- Launch a **Linux EC2 server** on AWS
+- Connect to it using **SSH**
+- Deploy a **Flask web application**
+- Run a **live website on a public IP**
+- See your app working on the cloud 🎉
+
+No prior cloud or backend knowledge is required.
 
 ---
 
-## 🗂️ Project Structure
+## 🚀 What This App Does
+
+- Displays a simple web form
+- Accepts your **name and email**
+- Shows a **Congratulations page** after submission
+- Runs fully on your EC2 instance
+
+You do **not** need to configure anything inside the app.
+
+---
+
+## 🛠️ Tech Used (Conceptual)
+
+- **Linux (Ubuntu)**
+- **Python**
+- **Flask**
+- **AWS EC2**
+
+You do **NOT** need to know:
+- Databases
+- SQL
+- Backend internals
+- AWS advanced services
+
+Everything complex is handled behind the scenes.
+
+---
+
+## 📂 Project Structure (Do Not Modify)
 
 .
 ├── main.py
+├── setup.sh
 ├── requirements.txt
-├── setup_ec2.sh
 ├── website/
 │ ├── init.py
-│ ├── models.py
 │ ├── views.py
-│ ├── auth.py
-│ ├── templates/
-│ └── static/
-└── .gitignore
+│ ├── models.py
+│ └── templates/
+│ ├── index.html
+│ └── success.html
+└── venv/
 
+
+You will **not** edit these files during the workshop.
 
 ---
 
-## ⚙️ Environment Variables
+## ⚙️ Deployment Steps (Follow Exactly)
 
-This project uses environment variables for security.
-
-| Variable | Description |
-|-------|------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `SECRET_KEY` | Flask secret key |
-
-Example:
+### 1️⃣ Clone the repository on your EC2 instance
 ```bash
-export DATABASE_URL="postgresql://user:password@host:5432/dbname"
-export SECRET_KEY="your_secret_key"
-🚀 Deployment on AWS EC2
-1️⃣ Launch EC2
-Ubuntu 20.04 / 22.04
-
-Open inbound ports:
-
-22 (SSH)
-
-5000 (Flask, temporary)
-
-2️⃣ Clone the repo
-git clone https://github.com/deku0002/python-rds-project.git
+git clone <repository-url>
 cd python-rds-project
+2️⃣ Make the setup script executable
+chmod +x setup.sh
 3️⃣ Run the setup script
-chmod +x setup_ec2.sh
-./setup_ec2.sh
-The script will:
+./setup.sh
+This will:
+
+Install Python and required tools
+
+Set up a virtual environment
 
 Install all dependencies
 
-Create a virtual environment
+⏳ This may take a few minutes.
 
-Ask for DATABASE_URL and SECRET_KEY
-
-Export and persist them
-
-Start the Flask app automatically
-
-▶️ Running the App
-After setup:
-
+4️⃣ Activate the virtual environment
+source venv/bin/activate
+5️⃣ Run the application
 python main.py
-Access in browser:
+6️⃣ Open your website in a browser
+http://<YOUR_EC2_PUBLIC_IP>:5000
+🎉 If the page loads, your deployment is successful.
 
-http://<EC2_PUBLIC_IP>:5000
-🛡️ Security Notes
-Database credentials are never hardcoded
-
-Environment variables are used instead
-
-.gitignore prevents secrets from being pushed
-
-RDS should be restricted to EC2 security group only in production
-
-🧪 Database Verification (Optional)
-psql -h <rds-endpoint> -U postgres -d notes_app
-\dt
-📌 Future Improvements
-Gunicorn + systemd
-
-Nginx reverse proxy
-
-HTTPS with SSL
-
-CI/CD with GitHub Actions
-
-Docker support
-
-👨‍💻 Author
-Devansh Sharma
-Computer Science Undergraduate
-Interested in Backend, Cloud, and Security
-
-⭐ Acknowledgements
-Flask Documentation
-
-AWS RDS & EC2
-
-PostgreSQL
-
-📜 License
-This project is open-source and available under the MIT License.
-
-
----

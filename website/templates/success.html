@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudCraft Workshop - Congratulations!</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: hsl(220, 20%, 8%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(220, 18%, 12%);
+            --card-foreground: hsl(210, 40%, 98%);
+            --primary: hsl(32, 100%, 50%);
+            --primary-foreground: hsl(220, 20%, 8%);
+            --muted: hsl(220, 15%, 20%);
+            --muted-foreground: hsl(215, 20%, 65%);
+            --border: hsl(220, 15%, 22%);
+            --aws-orange: hsl(32, 100%, 50%);
+            --terminal-green: hsl(142, 70%, 45%);
+            --cloud-blue: hsl(200, 80%, 60%);
+            --linux-purple: hsl(270, 60%, 55%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Effects */
+        .celebration-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, hsla(32, 100%, 50%, 0.15), hsla(142, 70%, 45%, 0.1), hsla(200, 80%, 60%, 0.1));
+            z-index: 0;
+        }
+
+        .glow-orb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, hsla(32, 100%, 50%, 0.2), transparent 70%);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .confetti {
+            position: absolute;
+            border-radius: 2px;
+            animation: confetti-fall 4s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: hsla(32, 100%, 50%, 0.2);
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.2;
+            }
+            25% {
+                transform: translateY(-15px) translateX(10px);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateY(-30px) translateX(0);
+                opacity: 0.5;
+            }
+            75% {
+                transform: translateY(-15px) translateX(-10px);
+                opacity: 0.4;
+            }
+        }
+
+        /* Content Container */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 3rem 1rem;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-icon {
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-icon .terminal-icon {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            color: var(--terminal-green);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-title span {
+            color: var(--primary);
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            margin-top: -4px;
+        }
+
+        /* Terminal Card */
+        .terminal-card {
+            background: linear-gradient(145deg, hsl(220, 18%, 14%), hsl(220, 18%, 10%));
+            backdrop-filter: blur(24px);
+            border: 1px solid hsla(220, 15%, 22%, 0.5);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px hsla(0, 0%, 0%, 0.5), 0 0 60px hsla(32, 100%, 50%, 0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background: hsla(220, 18%, 8%, 0.8);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: hsl(0, 84%, 60%); }
+        .terminal-dot.yellow { background: hsl(45, 100%, 60%); }
+        .terminal-dot.green { background: var(--terminal-green); }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .terminal-body {
+            padding: 2rem;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .terminal-prompt {
+            color: var(--terminal-green);
+            user-select: none;
+        }
+
+        .terminal-command {
+            color: var(--cloud-blue);
+        }
+
+        .terminal-output {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: hsla(142, 70%, 45%, 0.2);
+            border: 1px solid hsla(142, 70%, 45%, 0.3);
+            border-radius: 9999px;
+            color: var(--terminal-green);
+            font-size: 0.75rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .congrats-section {
+            text-align: center;
+            padding: 1.5rem 0;
+            border-top: 1px dashed var(--border);
+            border-bottom: 1px dashed var(--border);
+            margin: 1.5rem 0;
+        }
+
+        .congrats-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--terminal-green), var(--cloud-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .congrats-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        .congrats-subtitle {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: hsla(220, 15%, 18%, 0.5);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        .skill-item .icon {
+            font-size: 1rem;
+        }
+
+        .skill-item.aws .icon { color: var(--aws-orange); }
+        .skill-item.linux .icon { color: var(--linux-purple); }
+        .skill-item.cloud .icon { color: var(--cloud-blue); }
+        .skill-item.terminal .icon { color: var(--terminal-green); }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--terminal-green);
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .terminal-card {
+                margin: 0 1rem;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .congrats-title {
+                font-size: 1.5rem;
+            }
+            
+            .congrats-name {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="celebration-bg"></div>
+    <div class="glow-orb"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Confetti -->
+    <div class="confetti-container" id="confetti"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Logo -->
+        <div class="logo">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                </svg>
+                <svg class="terminal-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="4 17 10 11 4 5"/>
+                    <line x1="12" x2="20" y1="19" y2="19"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <span class="logo-title">Cloud<span>Craft</span></span>
+                <span class="logo-subtitle font-mono">AWS × Linux Workshop</span>
+            </div>
+        </div>
+
+        <!-- Terminal Card -->
+        <div class="terminal-card">
+            <div class="terminal-header">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title font-mono">cloudcraft@workshop ~ certificate</span>
+            </div>
+            <div class="terminal-body font-mono">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command">./verify-completion.sh</span>
+                </div>
+                <div class="terminal-output">
+                    <span class="success-badge">
+                        <span>✓</span>
+                        <span>WORKSHOP COMPLETED</span>
+                    </span>
+                </div>
+
+                <div class="congrats-section">
+                    <h1 class="congrats-title">🎉 Congratulations!</h1>
+                    <p class="congrats-name" id="participant-name">Participant</p>
+                    <p class="congrats-subtitle">You've successfully completed the CloudCraft Workshop</p>
+                </div>
+
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command">cat skills-acquired.log</span>
+                </div>
+                <div class="terminal-output">
+                    <div class="skills-grid">
+                        <div class="skill-item aws">
+                            <span class="icon">☁️</span>
+                            <span>AWS Cloud Services</span>
+                        </div>
+                        <div class="skill-item linux">
+                            <span class="icon">🐧</span>
+                            <span>Linux Administration</span>
+                        </div>
+                        <div class="skill-item cloud">
+                            <span class="icon">🚀</span>
+                            <span>Cloud Deployment</span>
+                        </div>
+                        <div class="skill-item terminal">
+                            <span class="icon">⌨️</span>
+                            <span>CLI Mastery</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command">echo "Ready for the cloud!"</span>
+                    <span class="terminal-cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer font-mono">
+            <p>© 2025 CloudCraft Workshop</p>
+        </div>
+    </div>
+
+    <script>
+        // Get name from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name') || 'Participant';
+        document.getElementById('participant-name').textContent = name;
+
+        // Generate Confetti
+        const confettiContainer = document.getElementById('confetti');
+        const colors = [
+            'hsl(32, 100%, 50%)',    // AWS orange
+            'hsl(142, 70%, 45%)',    // Terminal green
+            'hsl(200, 80%, 60%)',    // Cloud blue
+            'hsl(270, 60%, 55%)',    // Linux purple
+            'hsl(45, 100%, 60%)'     // Gold
+        ];
+
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.width = (8 + Math.random() * 8) + 'px';
+            confetti.style.height = (5 + Math.random() * 5) + 'px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.animationDuration = (3 + Math.random() * 2) + 's';
+            confettiContainer.appendChild(confetti);
+        }
+
+        // Generate Floating Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.width = (2 + Math.random() * 4) + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 20) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

@@ -1,38 +1,35 @@
-from flask import Blueprint, render_template, request, flash, jsonify
-from flask_login import login_required, current_user
-from .models import Note
+from flask import Blueprint, render_template, request, flash
+from .models import Participant
 from . import db
-import json
 
 views = Blueprint('views', __name__)
 
-
 @views.route('/', methods=['GET', 'POST'])
-@login_required
-def home():
+def index():
     if request.method == 'POST':
-        note = request.form.get('note')
+        name = request.form.get('name')
+        email = request.form.get('email')
 
-        if len(note) < 1:
-            flash('Note is too short!', category='error')
-        else:
-            new_note = Note(data=note, user_id=current_user.id)
-            db.session.add(new_note)
-            db.session.commit()
-            flash('Note added!', category='success')
+        # Basic validation
+        if not name or not email:
+            flash("Name and Email are required", category="error")
+            return render_template("index.html")
 
-    return render_template("home.html")
+        # Prevent duplicate submissions
+        existing_participant = Participant.query.filter_by(email=email).first()
+        if existing_participant:
+            flash(
+                "This email is already registered. Certificate will be sent after verification.",
+                category="error"
+            )
+            return render_template("index.html")
 
-
-@views.route('/delete-note', methods=['POST'])
-@login_required
-def delete_note():
-    data = json.loads(request.data)
-    note_id = data['noteId']
-
-    note = Note.query.get(note_id)
-    if note and note.user_id == current_user.id:
-        db.session.delete(note)
+        # Save participant to database
+        participant = Participant(name=name, email=email)
+        db.session.add(participant)
         db.session.commit()
 
-    return jsonify({})
+        # Success page (certificate sent manually later)
+        return render_template("success.html", name=name)
+
+    return render_template("index.html")

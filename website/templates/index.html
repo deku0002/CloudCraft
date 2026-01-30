@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudCraft Workshop - Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: hsl(220, 20%, 8%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(220, 18%, 12%);
+            --card-foreground: hsl(210, 40%, 98%);
+            --primary: hsl(32, 100%, 50%);
+            --primary-foreground: hsl(220, 20%, 8%);
+            --muted: hsl(220, 15%, 20%);
+            --muted-foreground: hsl(215, 20%, 65%);
+            --border: hsl(220, 15%, 22%);
+            --input-bg: hsl(220, 18%, 14%);
+            --aws-orange: hsl(32, 100%, 50%);
+            --terminal-green: hsl(142, 70%, 45%);
+            --cloud-blue: hsl(200, 80%, 60%);
+            --linux-purple: hsl(270, 60%, 55%);
+            --error: hsl(0, 84%, 60%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(hsla(220, 15%, 22%, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, hsla(220, 15%, 22%, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at top, hsla(32, 100%, 50%, 0.1), transparent 50%),
+                        radial-gradient(ellipse at bottom, hsla(142, 70%, 45%, 0.05), transparent 50%);
+            z-index: 0;
+        }
+
+        .glow-orb {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, hsla(32, 100%, 50%, 0.15), transparent 60%);
+            filter: blur(40px);
+            z-index: 0;
+        }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: hsla(32, 100%, 50%, 0.3);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-40px) translateX(20px);
+                opacity: 0.5;
+            }
+        }
+
+        /* Content */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-icon {
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .logo-icon .terminal-icon {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            color: var(--terminal-green);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-title span {
+            color: var(--primary);
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-top: -4px;
+        }
+
+        /* Terminal Card */
+        .terminal-card {
+            background: linear-gradient(145deg, hsl(220, 18%, 14%), hsl(220, 18%, 10%));
+            backdrop-filter: blur(24px);
+            border: 1px solid hsla(220, 15%, 22%, 0.5);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px hsla(0, 0%, 0%, 0.5);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background: hsla(220, 18%, 8%, 0.8);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: hsl(0, 84%, 60%); }
+        .terminal-dot.yellow { background: hsl(45, 100%, 60%); }
+        .terminal-dot.green { background: var(--terminal-green); }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .terminal-body {
+            padding: 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--foreground), var(--muted-foreground));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            line-height: 1.5;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .alert-error {
+            background: hsla(0, 84%, 60%, 0.15);
+            border: 1px solid hsla(0, 84%, 60%, 0.3);
+            color: hsl(0, 84%, 70%);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .form-label .icon {
+            color: var(--terminal-green);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--foreground);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px hsla(32, 100%, 50%, 0.2);
+        }
+
+        .form-input:hover {
+            border-color: hsla(220, 15%, 35%, 1);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), hsl(28, 100%, 45%));
+            border: none;
+            border-radius: 0.5rem;
+            color: var(--primary-foreground);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px hsla(32, 100%, 50%, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px hsla(32, 100%, 50%, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-text {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .footer-text .dot {
+            width: 4px;
+            height: 4px;
+            background: var(--muted-foreground);
+            border-radius: 50%;
+        }
+
+        .footer-brand {
+            color: var(--terminal-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .terminal-card {
+                margin: 0 1rem;
+            }
+            
+            .logo-title {
+                font-size: 1.5rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .feature {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                text-align: left;
+            }
+
+            .feature-icon {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-gradient"></div>
+    <div class="glow-orb"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Logo -->
+        <div class="logo">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                </svg>
+                <svg class="terminal-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="4 17 10 11 4 5"/>
+                    <line x1="12" x2="20" y1="19" y2="19"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <span class="logo-title">Cloud<span>Craft</span></span>
+                <span class="logo-subtitle font-mono">AWS × Linux Workshop</span>
+            </div>
+        </div>
+
+        <!-- Terminal Card -->
+        <div class="terminal-card">
+            <div class="terminal-header">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title font-mono">cloudcraft@workshop ~ register</span>
+            </div>
+            <div class="terminal-body">
+                <!-- Welcome -->
+                <div class="welcome-section">
+                    <div class="welcome-icon">🚀</div>
+                    <h1 class="welcome-title">Welcome to CloudCraft</h1>
+                    <p class="welcome-subtitle">Complete the workshop by submitting your details below</p>
+                </div>
+
+                <!-- Flash Messages (Jinja2) -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-error">
+                        <span>⚠️</span>
+                        <span>{{ message }}</span>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <!-- Form -->
+                <form method="POST">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="icon">→</span>
+                            <span>Full Name</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-input"
+                            placeholder="$ whoami"
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="icon">→</span>
+                            <span>Email Address</span>
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="$ echo $EMAIL"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <span>Complete Workshop</span>
+                        <span class="arrow">🎉</span>
+                    </button>
+                </form>
+
+                <!-- Features -->
+                <div class="features">
+                    <div class="feature">
+                        <span class="feature-icon">☁️</span>
+                        <span class="feature-text">AWS Cloud</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🐧</span>
+                        <span class="feature-text">Linux CLI</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🛠️</span>
+                        <span class="feature-text">DevOps</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer font-mono">
+            <p class="footer-text">
+                <span>Powered by</span>
+                <span class="footer-brand">Flask</span>
+                <span class="dot"></span>
+                <span>Cloud</span>
+                <span class="dot"></span>
+                <span>Databases</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Generate Floating Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.width = (2 + Math.random() * 4) + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 15) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Add focus effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('.icon').style.color = 'var(--primary)';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.querySelector('.icon').style.color = 'var(--terminal-green)';
+            });
+        });
+    </script>
+</body>
+</html>
