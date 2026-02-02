@@ -18,7 +18,7 @@ def create_app():
     # Cloud  -> PostgreSQL (RDS) via DATABASE_URL
     # -------------------------
     app.config['SQLALCHEMY_DATABASE_URI'] = (
-    "postgresql://postgres:postgres@database-1.cdecyo464bcu.ap-south-1.rds.amazonaws.com"
+    "postgresql+psycopg://postgres:postgres@database-1.cdecyo464bcu.ap-south-1.rds.amazonaws.com:5432/postgres"
 )
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
